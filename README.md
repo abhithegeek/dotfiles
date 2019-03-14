@@ -24,6 +24,6 @@ PlugInstall will download fzf
 $cd ~/.vim/fzf  
 $./install  
   
-# install ripgrep on ubuntu
-curl -LO https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb  
+# install ripgrep on ubuntu https://github.com/BurntSushi/ripgrep/releases
+curl -LO <ripgrep_deb_file_url>  
 sudo dpkg -i ripgrep_0.10.0_amd64.deb

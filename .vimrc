@@ -13,7 +13,6 @@ set number
 
 " syntax highlighting
 syntax on
-set background=dark
 set t_Co=256
 
 "indent
@@ -37,9 +36,6 @@ set incsearch
 "set paste
 set clipboard=unnamedplus
 
-" folding manual
-set foldmethod=manual
-
 " mouse
 set mouse=a
 
@@ -62,8 +58,6 @@ if has('syntax') && has('eval')
     packadd! matchit
 endif
 
-colorscheme default
-set background=dark
 set history=10000
 
 " backup
@@ -81,7 +75,8 @@ set splitright
 filetype indent on
 set tabstop=2 softtabstop=2 expandtab shiftwidth=2 smarttab
 set list
-set listchars=tab:Â¦Â·,trail:Â·
+set listchars=tab:¦·,trail:·
+set lcs+=space:·
 highlight NonText guifg=#4a4a59
 highlight SpecialKey guifg=#4a4a59
 
@@ -98,8 +93,14 @@ set wildignorecase
 " Don't add .git to wildignore because it breaks Gdiff.
 set wildignore=*/node_modules/*,*/www/*,*/dist/*,*/result/*,*/.idea/*,*~,*/ar/*,*/cs/*,*/da/*,*/de/*,*/el/*,*/es/*,*/fi/*,*/fr/*,*/fr-CA/*,*/he/*,*/hu/*,*/it/*,*/ja/*,*/ko/*,*/nl/*,*/no/*,*/pl/*,*/pt/*,*/pt-PT/*,*/ro/*,*/ru/*,*/sk/*,*/sv/*,*/th/*,*/tr/*,*/zh-Hans/*,*/zh-Hant/*,*/plugged/*
 
+" Ignore included files when doing autocomplete.
+set complete-=i
+
 " show diff vertically
 set diffopt+=vertical
+
+" show status line
+set laststatus=2
 
 " Vim Configuration : plugin definitions
 "==========================================
@@ -114,8 +115,11 @@ set diffopt+=vertical
 " Start plugins definition
 call plug#begin($HOME.'/.vim/plugins/plugged')
 
+" Abhishek: vim-matchup should be at top because it conflicts with matchit plugin that
+" is loaded by other extensions.
+Plug 'andymass/vim-matchup' "matchit alternative
 Plug 'scrooloose/nerdtree'
-" Plug 'scrooloose/nerdcommenter'
+" Plug 'scrooloose/nerdcommenter' " Conflicts with Auto pairs
 " Plug 'goatslacker/mango.vim'
 " Plug 'bling/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
@@ -144,7 +148,7 @@ Plug 'mattn/emmet-vim'
 
 " Abhishek's plugin list.
 Plug 'jiangmiao/auto-pairs' " Auto insert matching pair
-Plug 'yggdroot/indentline' " Show indentation
+" Plug 'yggdroot/indentline' " Show indentation
 Plug 'xolox/vim-misc' " Must for vim-session
 Plug 'xolox/vim-session' " Auto save session
 Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --bin'  }
@@ -152,7 +156,14 @@ Plug 'junegunn/fzf.vim'
 Plug 'w0rp/ale'
 " Use this plugin until ale fix option works.
 Plug 'ruanyl/vim-fixmyjs' " eslint --fix
-Plug 'qpkorr/vim-bufkill'
+Plug 'qpkorr/vim-bufkill' " "
+Plug 'google/vim-searchindex' " show number of matches in search
+" Dark colorscheme
+" Plug 'romainl/apprentice' 
+" colorscheme didnt work for some reason
+" Plug 'altercation/vim-colors-solarized' 
+Plug 'cormacrelf/vim-colors-github' "Github colorscheme.
+Plug 'pangloss/vim-javascript'
 call plug#end()
 
 
@@ -183,7 +194,6 @@ let g:NERDTreeShowHidden=1
 
 " ignored files
 let g:NERDTreeIgnore=['\.swp$', '\~$']
-nnoremap <c-n> :NERDTreeToggle<cr>
 
 " helps quiting when there's no buffers left but NerdTree
 function! CheckLeftBuffers()
@@ -262,7 +272,8 @@ let g:used_javascript_libs = 'jquery,requirejs,jasmine'
 
 " [> Emmet shortcuts <]
 "
-au FileType html,css,scss imap <leader>k  emmet#expandAbbrIntelligent("\<tab>")
+" au FileType html,css,scss imap <leader>k  emmet#expandAbbrIntelligent("\<tab>")
+let g:user_emmet_leader_key='<tab>'
 
 "netrw configuration
 let g:netrw_banner=0                " hide annoying banner
@@ -293,6 +304,19 @@ let g:ale_sign_column_always = 1
 " let g:airline#extensions#ale#enabled = 1
 " let g:ale_fix_on_save = 1
 
+" vim matchup configuration
+" defer matching for faster cursor movement.
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_hi_surround_always = 1
+let g:matchup_delim_noskips = 2   " don't recognize anything in comments
+let g:matchup_matchparen_timeout = 300
+let g:matchup_matchparen_insert_timeout = 60
+let g:matchup_matchparen_deferred_show_delay = 100
+let g:matchup_matchparen_deferred_hide_delay = 700
+
+" githib colorscheme, use darker background.
+let g:github_colors_soft = 1
+
 " Vim Configuration : global mapping
 "======================================
 
@@ -322,22 +346,22 @@ let g:localmapleader = "\\"
 nnoremap <C-l> :nohlsearch<CR><C-l>
 
 " Wrap a word in double quotes
-" nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
+nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 
 " Wrap a word in single quotes
-" nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
+nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
 
 " select inside parents
-" onoremap in( :<c-u>normal! f(vi(<cr>
+onoremap in( :<c-u>normal! f(vi(<cr>
 
 " select inside braces
-" onoremap in{ :<c-u>normal! f{vi{<cr>
+onoremap in{ :<c-u>normal! f{vi{<cr>
 
 " select inside brackets
-" onoremap in[ :<c-u>normal! f[vi[<cr>
+onoremap in[ :<c-u>normal! f[vi[<cr>
 
 " Open MYVIMRC in a vsplit
-nnoremap <leader>ev :split $MYVIMRC<cr>
+nnoremap <leader>ev :vert split $MYVIMRC<cr>
 
 " Source MYVIMRC
 nnoremap <leader>sv :source $MYVIMRC<cr>
@@ -361,9 +385,12 @@ nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " close buffer
 nnoremap <Leader>d :BD<CR>
+" close window
+nnoremap <Leader>c :close<CR>
 " open terminal bash
 " close terminal -> <C-D><leader>d
-nnoremap <Leader>t :terminal bash<CR>
+nnoremap <Leader>t :terminal bash<CR><C-W>L
+nnoremap <Leader>vt :vert terminal bash<CR>
 
 " fzf mappings
 nnoremap <C-B> :Buffers<CR>
@@ -381,8 +408,32 @@ nnoremap <C-H>: :Hist:<CR>
 nnoremap <C-H>/ :Hist/<CR>
 
 " Nerdtree
-nnoremap <leader>n :NERDTreeFind<CR>
-nnoremap <leader>m :NERDTreeToggle<CR>
+nnoremap <leader>nf :NERDTreeFind<CR>
+nnoremap <leader>nt :NERDTreeToggle<CR>
+
+" Fugitive
+nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gb :Gblame<CR>
+
+" Save
+" nmap <c-s> :w<CR>
+" imap <c-s> <Esc>:w<CR>a
+
+" Pretty json
+nnoremap <leader>pj :PrettyJson<CR>gg=G<CR>
+
+if &diff
+  function! IwhiteToggle()
+    if &diffopt =~ 'iwhite'
+      set diffopt-=iwhite
+    else
+      set diffopt+=iwhite
+    endif
+  endfunction
+endif
 
 " Vim Configuration : autocommands
 "====================================
@@ -420,6 +471,44 @@ function! <SID>StripTrailingWhitespaces()
 endfunction
 autocmd BufWritePre *.css,*.js :call <SID>StripTrailingWhitespaces()
 
+" show or hide cursor line in active window
+augroup BgHighlight
+    autocmd!
+    autocmd WinEnter * set cul
+    autocmd WinLeave * set nocul
+augroup END
+
+" matchup autocommands
+augroup matchup_matchparen_highlight
+  autocmd!
+  autocmd ColorScheme * hi MatchWord ctermfg=magenta guifg=magenta
+augroup END
+
 " Vim Configuration : commands
 "====================================
 command! MakeTags !ctags -R .
+command! PrettyJson %!python -m json.tool
+
+" Vim Misc Configuration - This configuration needs to be in the end.
+" ======================
+set background=light
+" colorscheme default
+" colorscheme PaperColor
+colorscheme github
+
+" Custom status line start
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%#LineNr#
+set statusline+=\ %f
+set statusline+=%m\
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+" set statusline+=\[%{&fileformat}\]
+set statusline+=\ %{fugitive#statusline()}
+" set statusline+=\ %p%%
+set statusline+=\ %l/%L:%c
+set statusline+=\ 
+" Custom status line end
